@@ -18,8 +18,10 @@ import { Button } from "../ui/button";
 import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
 import { login } from "@/actions/login";
+import { useSearchParams } from "next/navigation";
 
 export const LoginForm = () => {
+    const params = useSearchParams();
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
@@ -35,16 +37,18 @@ export const LoginForm = () => {
         setSuccess(undefined);
         startTransition(() => {
             login(values).then((data) => {
-                setSuccess(data.success);
-                setError(data.error);
+                setSuccess(data?.success);
+                setError(data?.error);
+                // console.log(data);
             });
         });
     };
     return (
         <CardWrapper
             headerLabel="Welcome back"
-            backButtonLabel="Not registered yet?"
-            backButtonhref="/register"
+            backLinkText="Not registered yet?"
+            backLinkhref="/register"
+            backLinklabel="Sign Up"
             showSocial
         >
             <Form {...form}>

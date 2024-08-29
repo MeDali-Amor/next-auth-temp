@@ -7,15 +7,17 @@ import Link from "next/link";
 
 type CardWrapperProps = {
     children: React.ReactNode;
+    backLinkText: string;
+    backLinklabel: string;
+    backLinkhref: string;
     headerLabel: string;
-    backButtonLabel: string;
-    backButtonhref: string;
     showSocial?: boolean;
 };
 
 const CardWrapper = ({
-    backButtonLabel,
-    backButtonhref,
+    backLinkText,
+    backLinklabel,
+    backLinkhref,
     children,
     headerLabel,
     showSocial,
@@ -34,14 +36,14 @@ const CardWrapper = ({
             <CardContent>{children}</CardContent>
             <CardFooter className=" justify-center  pb-4">
                 <div className="text-xs font-semibold text-black">
-                    Don't have an account?
+                    {backLinkText}{" "}
                 </div>
                 <Button
                     size={"sm"}
                     className="text-xs decoration-transparent text-indigo-600"
                     variant={"link"}
                 >
-                    <Link href={"/register"}>Sign Up</Link>
+                    <Link href={backLinkhref}>{backLinklabel}</Link>
                 </Button>
             </CardFooter>
             {showSocial && (
