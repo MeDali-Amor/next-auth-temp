@@ -19,11 +19,13 @@ import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
 import { login } from "@/actions/login";
 import { useSearchParams } from "next/navigation";
+import useAuthError from "@/hooks/useAuthError";
 
 export const LoginForm = () => {
     const params = useSearchParams();
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>(undefined);
+    const { urlError } = useAuthError();
     const [success, setSuccess] = useState<string | undefined>(undefined);
     const form = useForm<zod.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
@@ -93,7 +95,7 @@ export const LoginForm = () => {
                             )}
                         />
                     </div>
-                    {error && <FormError message={error} />}
+                    {error && <FormError message={error || urlError} />}
                     {success && <FormSuccess message={success} />}
                     <Button disabled={isPending} className="w-full">
                         Login

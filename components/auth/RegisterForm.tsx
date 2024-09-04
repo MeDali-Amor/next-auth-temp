@@ -19,18 +19,20 @@ import {
 import { Input } from "../ui/input";
 import CardWrapper from "./CardWrapper";
 
+const defaultValues = {
+    email: "",
+    password: "",
+    username: "",
+    passwordConfirm: "",
+};
+
 export const RegisterForm = () => {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
     const form = useForm<zod.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-            username: "",
-            passwordConfirm: "",
-        },
+        defaultValues,
     });
     const onSubmit = (values: zod.infer<typeof RegisterSchema>) => {
         setError(undefined);
@@ -38,6 +40,9 @@ export const RegisterForm = () => {
         startTransition(() => {
             register(values).then((data) => {
                 setSuccess(data.success);
+                if (data.success) {
+                    form.reset();
+                }
                 setError(data.error);
             });
         });

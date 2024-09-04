@@ -1,7 +1,11 @@
 "use server";
 import { signIn } from "@/auth";
+import { db } from "@/lib/db";
+import { generateVerificationToken } from "@/lib/tokens";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { LoginSchema } from "@/schemas/indes";
+import { getUserByEmail } from "@/utils/user";
+import { User } from "@prisma/client";
 import { error } from "console";
 import { AuthError } from "next-auth";
 import * as zod from "zod";
@@ -21,6 +25,16 @@ export const login = async (values: zod.infer<typeof LoginSchema>) => {
     }
 
     const { email, password } = validationData.data;
+    const user = (await getUserByEmail(email)) as User;
+    if (!user) {
+        return { error: "Invalid credentials" };
+    }
+    if (!user.emailVerified) {
+        const verificartionToken = await generateVerificationToken(user.email);
+        return {
+            success: "A verification email was send to this email address",
+        };
+    }
     try {
         await signIn("credentials", {
             email,
