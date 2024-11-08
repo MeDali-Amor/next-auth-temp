@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useTransition } from "react";
+import React, { useMemo, useState, useTransition } from "react";
 import CardWrapper from "./CardWrapper";
 import { useForm } from "react-hook-form";
 import * as zod from "zod";
@@ -18,11 +18,9 @@ import { Button } from "../ui/button";
 import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
 import { login } from "@/actions/login";
-import { useSearchParams } from "next/navigation";
 import useAuthError from "@/hooks/useAuthError";
 
 export const LoginForm = () => {
-    const params = useSearchParams();
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>(undefined);
     const { urlError } = useAuthError();
@@ -41,10 +39,10 @@ export const LoginForm = () => {
             login(values).then((data) => {
                 setSuccess(data?.success);
                 setError(data?.error);
-                // console.log(data);
             });
         });
     };
+    const authError = useMemo(() => error ?? urlError, [error, urlError]);
     return (
         <CardWrapper
             headerLabel="Welcome back"
@@ -95,7 +93,7 @@ export const LoginForm = () => {
                             )}
                         />
                     </div>
-                    {error && <FormError message={error || urlError} />}
+                    {authError && <FormError message={authError} />}
                     {success && <FormSuccess message={success} />}
                     <Button disabled={isPending} className="w-full">
                         Login

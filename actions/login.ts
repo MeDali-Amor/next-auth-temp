@@ -1,6 +1,7 @@
 "use server";
 import { signIn } from "@/auth";
 import { db } from "@/lib/db";
+import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { LoginSchema } from "@/schemas/indes";
@@ -30,7 +31,9 @@ export const login = async (values: zod.infer<typeof LoginSchema>) => {
         return { error: "Invalid credentials" };
     }
     if (!user.emailVerified) {
-        const verificartionToken = await generateVerificationToken(user.email);
+        const verificationToken = await generateVerificationToken(user.email);
+        await sendVerificationEmail(email, verificationToken.token);
+
         return {
             success: "A verification email was send to this email address",
         };

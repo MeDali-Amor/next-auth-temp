@@ -1,7 +1,7 @@
 /**
  * @type {string[]}
  */
-export const publicRoutes = ["/"];
+export const publicRoutes = ["/", "/account-verification"];
 
 export const authRoutes = ["/register", "/login", "/auth-error"];
 
