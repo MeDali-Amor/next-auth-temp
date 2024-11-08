@@ -11,6 +11,14 @@ export const LoginSchema = zod.object({
         message: "Password is required",
     }),
 });
+export const ResetSchema = zod.object({
+    email: zod
+        .string()
+        .min(1, {
+            message: "Email is required",
+        })
+        .email(),
+});
 export const RegisterSchema = zod
     .object({
         email: zod
@@ -38,3 +46,12 @@ export const RegisterSchema = zod
             });
         }
     });
+
+export const UpdatePasswordSchema = zod.object({
+    password: zod.string().min(6, {
+        message: "Password should be at least 6 characters long",
+    }),
+    passwordConfirm: zod.string().min(6, {
+        message: "Password should be at least 6 characters long",
+    }),
+});

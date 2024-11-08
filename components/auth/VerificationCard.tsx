@@ -1,17 +1,16 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import CardWrapper from "./CardWrapper";
-import { useRouter, useSearchParams } from "next/navigation";
-import Loader from "../Loader";
 import { emailVerification } from "@/actions/verification";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
+import Loader from "../Loader";
+import CardWrapper from "./CardWrapper";
 
 const VerificationCard = () => {
     const [error, setError] = useState<string | undefined>(undefined);
     const [success, setSuccess] = useState<string | undefined>(undefined);
     const params = useSearchParams();
-    const router = useRouter();
     const token = params.get("token");
     const handleVerification = useCallback(() => {
         if (!token) {

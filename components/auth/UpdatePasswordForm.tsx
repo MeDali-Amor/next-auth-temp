@@ -1,10 +1,12 @@
 "use client";
-import React, { useMemo, useState, useTransition } from "react";
-import CardWrapper from "./CardWrapper";
+import { UpdatePasswordSchema } from "@/schemas/indes";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as zod from "zod";
-import { LoginSchema } from "@/schemas/indes";
-import { zodResolver } from "@hookform/resolvers/zod";
+import FormError from "../FormError";
+import FormSuccess from "../FormSuccess";
+import { Button } from "../ui/button";
 import {
     Form,
     FormControl,
@@ -14,73 +16,61 @@ import {
     FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import FormError from "../FormError";
-import FormSuccess from "../FormSuccess";
-import { login } from "@/actions/login";
-import useAuthError from "@/hooks/useAuthError";
-import Link from "next/link";
+import CardWrapper from "./CardWrapper";
+import { passwordUpdate } from "@/actions/password-update";
+import { useSearchParams } from "next/navigation";
 
-export const LoginForm = () => {
+const defaultValues = {
+    password: "",
+    passwordConfirm: "",
+};
+
+export const UpdatePasswordForm = () => {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | undefined>(undefined);
-    const { urlError } = useAuthError();
     const [success, setSuccess] = useState<string | undefined>(undefined);
-    const form = useForm<zod.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-        },
+    const form = useForm<zod.infer<typeof UpdatePasswordSchema>>({
+        resolver: zodResolver(UpdatePasswordSchema),
+        defaultValues,
     });
-    const onSubmit = (values: zod.infer<typeof LoginSchema>) => {
+    const params = useSearchParams();
+    const token = params.get("token");
+    const onSubmit = (values: zod.infer<typeof UpdatePasswordSchema>) => {
         setError(undefined);
         setSuccess(undefined);
         startTransition(() => {
-            login(values).then((data) => {
-                setSuccess(data?.success);
-                setError(data?.error);
+            if (!token) {
+                return setError("Token not found");
+            }
+            passwordUpdate(token, values).then((data) => {
+                setSuccess(data.success);
+                if (data.success) {
+                    form.reset();
+                }
+                setError(data.error);
             });
         });
     };
-    const authError = useMemo(() => error ?? urlError, [error, urlError]);
     return (
         <CardWrapper
-            headerLabel="Welcome back"
-            backLinkText="Not registered yet?"
-            backLinkhref="/register"
-            backLinklabel="Sign Up"
+            headerLabel="Create an account"
+            backLinkText="Already have an account?"
+            backLinkhref="/login"
+            backLinklabel="Sign In"
             showSocial
         >
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4"
+                    className="space-y-6"
                 >
-                    <div className="space-y-3">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            disabled={isPending}
-                                            {...field}
-                                            placeholder="email@email.com"
-                                        ></Input>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <div className="space-y-4">
                         <FormField
                             control={form.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel>New password</FormLabel>
                                     <FormControl>
                                         <Input
                                             disabled={isPending}
@@ -93,20 +83,29 @@ export const LoginForm = () => {
                                 </FormItem>
                             )}
                         />
-                        <div className="w-full text-end">
-                            <Link
-                                href={"/reset"}
-                                className=" text-sm  text-gray-700 underline"
-                            >
-                                Forgot password?
-                            </Link>
-                        </div>
+                        <FormField
+                            control={form.control}
+                            name="passwordConfirm"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Confirm password</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled={isPending}
+                                            type="password"
+                                            {...field}
+                                            placeholder="******"
+                                        ></Input>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
-
-                    {authError && <FormError message={authError} />}
+                    {error && <FormError message={error} />}
                     {success && <FormSuccess message={success} />}
                     <Button disabled={isPending} className="w-full">
-                        Login
+                        Reset Password
                     </Button>
                 </form>
             </Form>

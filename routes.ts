@@ -1,7 +1,12 @@
 /**
  * @type {string[]}
  */
-export const publicRoutes = ["/", "/account-verification"];
+export const publicRoutes = [
+    "/",
+    "/account-verification",
+    "/reset",
+    "/reset-password",
+];
 
 export const authRoutes = ["/register", "/login", "/auth-error"];
 
