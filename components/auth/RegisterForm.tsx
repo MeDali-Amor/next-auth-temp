@@ -1,6 +1,6 @@
 "use client";
 import { register } from "@/actions/register";
-import { RegisterSchema } from "@/schemas/indes";
+import { RegisterSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";

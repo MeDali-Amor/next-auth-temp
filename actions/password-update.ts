@@ -2,7 +2,7 @@
 
 import * as bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { UpdatePasswordSchema } from "@/schemas/indes";
+import { UpdatePasswordSchema } from "@/schemas";
 import { getResetTokenByToken } from "@/utils/token";
 import { getUserByEmail } from "@/utils/user";
 import * as zod from "zod";

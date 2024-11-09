@@ -1,5 +1,5 @@
 "use server";
-import { RegisterSchema } from "@/schemas/indes";
+import { RegisterSchema } from "@/schemas";
 import * as zod from "zod";
 import * as bcrypt from "bcryptjs";
 import { db } from "@/lib/db";

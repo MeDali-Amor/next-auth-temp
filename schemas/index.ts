@@ -10,6 +10,7 @@ export const LoginSchema = zod.object({
     password: zod.string().min(1, {
         message: "Password is required",
     }),
+    code2FA: zod.optional(zod.string()),
 });
 export const ResetSchema = zod.object({
     email: zod

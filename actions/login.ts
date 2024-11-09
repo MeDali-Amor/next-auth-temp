@@ -1,9 +1,11 @@
 "use server";
 import { signIn } from "@/auth";
-import { sendVerificationEmail } from "@/lib/mail";
-import { generateVerificationToken } from "@/lib/tokens";
+import { db } from "@/lib/db";
+import { send2FAEmail, sendVerificationEmail } from "@/lib/mail";
+import { generate2FAToken, generateVerificationToken } from "@/lib/tokens";
+import { get2FAConfirmationByUserId } from "@/lib/two-factor-confirmation";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { LoginSchema } from "@/schemas/indes";
+import { LoginSchema } from "@/schemas";
 import { getUserByEmail } from "@/utils/user";
 import { User } from "@prisma/client";
 import { AuthError } from "next-auth";
@@ -23,7 +25,7 @@ export const login = async (values: zod.infer<typeof LoginSchema>) => {
         };
     }
 
-    const { email, password } = validationData.data;
+    const { email, password, code2FA } = validationData.data;
     const user = (await getUserByEmail(email)) as User;
     if (!user) {
         return { error: "Invalid credentials" };
@@ -35,6 +37,45 @@ export const login = async (values: zod.infer<typeof LoginSchema>) => {
         return {
             success: "A verification email was send to this email address",
         };
+    }
+    if (user.isTowFactorEnabled) {
+        if (code2FA) {
+            const twoFactorToken = await db.twoFactorToken.findFirst({
+                where: {
+                    email: user.email,
+                },
+            });
+            if (!twoFactorToken || twoFactorToken.token !== code2FA) {
+                return { error: "Invalid code" };
+            }
+            const hasExpired = new Date(twoFactorToken.expiresAt) < new Date();
+            if (hasExpired) {
+                return { error: "Token has expired" };
+            }
+            await db.twoFactorToken.delete({
+                where: { id: twoFactorToken.id },
+            });
+            const existaing2FConfirmation = await get2FAConfirmationByUserId(
+                user.id
+            );
+            if (existaing2FConfirmation) {
+                db.twoFactorConfirmation.delete({
+                    where: { id: existaing2FConfirmation.id },
+                });
+            }
+            await db.twoFactorConfirmation.create({
+                data: {
+                    userId: user.id,
+                },
+            });
+        } else {
+            const twoFactorToken = await generate2FAToken(user.email);
+            await send2FAEmail(user.email, twoFactorToken.token);
+            return {
+                success: "A 2FA confirmation code was sent to your email",
+                twoFA: true,
+            };
+        }
     }
     try {
         await signIn("credentials", {

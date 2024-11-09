@@ -2,7 +2,7 @@ import Google from "next-auth/providers/google";
 import * as bcrypt from "bcryptjs";
 import Credentials from "next-auth/providers/credentials";
 import type { NextAuthConfig } from "next-auth";
-import { LoginSchema } from "./schemas/indes";
+import { LoginSchema } from "./schemas";
 import { getUserByEmail } from "./utils/user";
 import { User } from "@prisma/client";
 

@@ -17,3 +17,6 @@ export const getVerificationTokenByToken = getTokenByType(
 );
 
 export const getResetTokenByToken = getTokenByType(db.resetToken.findUnique);
+export const getTwoFactorTokenByToken = getTokenByType(
+    db.twoFactorToken.findUnique
+);

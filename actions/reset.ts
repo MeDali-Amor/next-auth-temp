@@ -1,7 +1,7 @@
 "use server";
 
 import { getUserByEmail } from "@/utils/user";
-import { ResetSchema } from "./../schemas/indes";
+import { ResetSchema } from "../schemas";
 import { z } from "zod";
 import { generateResetToken } from "@/lib/tokens";
 import { sendResetEmail } from "@/lib/mail";

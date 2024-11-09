@@ -1,5 +1,5 @@
 "use client";
-import { UpdatePasswordSchema } from "@/schemas/indes";
+import { UpdatePasswordSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
