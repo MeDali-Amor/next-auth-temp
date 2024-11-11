@@ -22,7 +22,7 @@ import CardWrapper from "./CardWrapper";
 const defaultValues = {
     email: "",
     password: "",
-    username: "",
+    name: "",
     passwordConfirm: "",
 };
 
@@ -63,7 +63,7 @@ export const RegisterForm = () => {
                     <div className="space-y-4">
                         <FormField
                             control={form.control}
-                            name="username"
+                            name="name"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Username</FormLabel>

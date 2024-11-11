@@ -42,7 +42,10 @@ export const LoginForm = () => {
                 .then((data) => {
                     setError(data?.error);
 
-                    setSuccess(data?.success);
+                    if (data.success) {
+                        form.reset();
+                        setSuccess(data?.success);
+                    }
 
                     if (data.twoFA) {
                         setShow2FA(true);

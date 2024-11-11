@@ -17,7 +17,7 @@ export const register = async (values: zod.infer<typeof RegisterSchema>) => {
         };
     }
 
-    const { email, password, username } = data!;
+    const { email, password, name } = data!;
     const hashedPassword = await bcrypt.hash(password, 10);
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
@@ -28,7 +28,7 @@ export const register = async (values: zod.infer<typeof RegisterSchema>) => {
     await db.user.create({
         data: {
             email,
-            username,
+            name,
             password: hashedPassword,
         },
     });

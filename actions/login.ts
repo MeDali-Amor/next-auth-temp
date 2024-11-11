@@ -10,6 +10,8 @@ import { getUserByEmail } from "@/utils/user";
 import { User } from "@prisma/client";
 import { AuthError } from "next-auth";
 import * as zod from "zod";
+import * as bcrypt from "bcryptjs";
+import { error } from "console";
 
 export const login = async (values: zod.infer<typeof LoginSchema>) => {
     const validationData = LoginSchema.safeParse(values);
@@ -69,6 +71,14 @@ export const login = async (values: zod.infer<typeof LoginSchema>) => {
                 },
             });
         } else {
+            const passwordMatch = await bcrypt.compare(
+                password,
+                user.password!
+            );
+            if (!passwordMatch) {
+                return { error: "Invalid credentials" };
+            }
+
             const twoFactorToken = await generate2FAToken(user.email);
             await send2FAEmail(user.email, twoFactorToken.token);
             return {

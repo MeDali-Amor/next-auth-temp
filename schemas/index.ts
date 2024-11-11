@@ -34,8 +34,8 @@ export const RegisterSchema = zod
         passwordConfirm: zod.string().min(6, {
             message: "Password should be at least 6 characters long",
         }),
-        username: zod.string().min(1, {
-            message: "username is required",
+        name: zod.string().min(1, {
+            message: "name is required",
         }),
     })
     .superRefine(({ password, passwordConfirm }, ctx) => {
