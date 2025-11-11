@@ -6,18 +6,8 @@ import useCerrentUser from "@/hooks/useCerrentUser";
 
 const Settings = () => {
     const user = useCerrentUser();
-    const onClick = () => {
-        logout();
-    };
-    return (
-        <div>
-            <Button onClick={onClick} variant="outline">
-                Log out
-            </Button>
 
-            {JSON.stringify(user)}
-        </div>
-    );
+    return <div></div>;
 };
 
 export default Settings;
