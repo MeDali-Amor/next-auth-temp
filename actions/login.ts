@@ -8,10 +8,9 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { LoginSchema } from "@/schemas";
 import { getUserByEmail } from "@/utils/user";
 import { User } from "@prisma/client";
+import * as bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import * as zod from "zod";
-import * as bcrypt from "bcryptjs";
-import { error } from "console";
 
 export const login = async (values: zod.infer<typeof LoginSchema>) => {
     const validationData = LoginSchema.safeParse(values);
@@ -40,6 +39,7 @@ export const login = async (values: zod.infer<typeof LoginSchema>) => {
             success: "A verification email was send to this email address",
         };
     }
+    console.log({ user });
     if (user.isTowFactorEnabled) {
         if (code2FA) {
             const twoFactorToken = await db.twoFactorToken.findFirst({

@@ -32,6 +32,7 @@ export const LoginForm = () => {
         defaultValues: {
             email: "",
             password: "",
+            code2FA: "",
         },
     });
     const onSubmit = (values: zod.infer<typeof LoginSchema>) => {
@@ -42,13 +43,12 @@ export const LoginForm = () => {
                 .then((data) => {
                     setError(data?.error);
 
-                    if (data.success) {
-                        form.reset();
-                        setSuccess(data?.success);
-                    }
-
                     if (data.twoFA) {
                         setShow2FA(true);
+                    }
+                    if (data.success) {
+                        // form.reset();
+                        setSuccess(data?.success);
                     }
                 })
                 .catch(() => {
@@ -57,6 +57,7 @@ export const LoginForm = () => {
         });
     };
     const authError = useMemo(() => error ?? urlError, [error, urlError]);
+    console.log({ v: form.getValues() });
     return (
         <CardWrapper
             headerLabel="Welcome back"
